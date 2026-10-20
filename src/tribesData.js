@@ -14,6 +14,24 @@ export const TRIBES = [
     role: 'Guerreiro Régio • Golpes de Alto Impacto',
     weapon: 'Cetro Imperial de Ouro & Lápis-Lazúli',
     ultimate: 'Fúria do Leão Ancestral (Invocação de Avatar Espectral)',
+    forms: {
+      young: {
+        title: 'O Jovem Leãozinho de Hebrom',
+        role: 'Guerreiro Ágil • Combos de Espada de Bronze e Esquivas Rápidas',
+        weapon: 'Espada Curta de Bronze & Bordão de Pastor',
+        ultimate: 'Investida do Leãozinho (Combo Acrobático Veloz)',
+        modelFile: 'judah_young.glb',
+        stats: { power: 82, speed: 94, defense: 74, ruach: 75 }
+      },
+      awakened: {
+        title: 'O Leão Soberano (Despertar da Bênção)',
+        role: 'Patriarca Ungido • Alto Impacto, Super Armadura e Luz Solar',
+        weapon: 'Cetro Imperial de Ouro & Lápis-Lazúli',
+        ultimate: 'Fúria do Leão Ancestral (Invocação de Avatar Espectral)',
+        modelFile: 'judah.glb',
+        stats: { power: 98, speed: 80, defense: 95, ruach: 100 }
+      }
+    },
     colors: {
       primary: '#f59e0b',
       secondary: '#1e3a8a',

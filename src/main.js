@@ -5,6 +5,7 @@ class App {
   constructor() {
     this.canvas = document.getElementById('showroom-canvas');
     this.currentTribe = TRIBES[0]; // Judá por padrão
+    this.currentForm = 'young';    // 'young' ou 'awakened'
 
     // Inicializa o Showroom 3D
     this.showroom = new CharacterShowroom(this.canvas, (tribe) => {
@@ -71,7 +72,21 @@ class App {
     }
 
     // Carrega modelo 3D no Showroom
-    this.showroom.loadTribe(tribe);
+    this.showroom.loadTribe(tribe, this.currentForm);
+  }
+
+  selectForm(formKey) {
+    this.currentForm = formKey;
+
+    const btnYoung = document.getElementById('btn-form-young');
+    const btnAwakened = document.getElementById('btn-form-awakened');
+    if (btnYoung && btnAwakened) {
+      btnYoung.classList.toggle('active', formKey === 'young');
+      btnAwakened.classList.toggle('active', formKey === 'awakened');
+    }
+
+    this.updateTribeInfoPanel(this.currentTribe);
+    this.showroom.loadTribe(this.currentTribe, this.currentForm);
   }
 
   updateTribeInfoPanel(tribe) {
@@ -84,16 +99,20 @@ class App {
     const elWeapon = document.getElementById('char-weapon');
     const elUltimate = document.getElementById('char-ultimate');
 
+    // Recupera os dados da forma atual (se definidos) ou usa os gerais
+    const formData = (tribe.forms && tribe.forms[this.currentForm]) ? tribe.forms[this.currentForm] : tribe;
+
     if (elHebrew) elHebrew.innerText = tribe.hebrew;
     if (elSymbol) elSymbol.innerText = tribe.symbol;
     if (elName) elName.innerText = tribe.name;
-    if (elTitle) elTitle.innerText = tribe.title;
+    if (elTitle) elTitle.innerText = formData.title || tribe.title;
     if (elBlessing) elBlessing.innerText = tribe.blessing;
-    if (elRole) elRole.innerText = tribe.role;
-    if (elWeapon) elWeapon.innerText = tribe.weapon;
-    if (elUltimate) elUltimate.innerText = tribe.ultimate;
+    if (elRole) elRole.innerText = formData.role || tribe.role;
+    if (elWeapon) elWeapon.innerText = formData.weapon || tribe.weapon;
+    if (elUltimate) elUltimate.innerText = formData.ultimate || tribe.ultimate;
 
-    // Atualiza Barras de Atributos
+    // Atualiza Barras de Atributos da forma selecionada
+    const stats = formData.stats || tribe.stats;
     const setStat = (id, val) => {
       const fill = document.getElementById(`stat-${id}`);
       const num = document.getElementById(`stat-val-${id}`);
@@ -101,13 +120,19 @@ class App {
       if (num) num.innerText = val;
     };
 
-    setStat('power', tribe.stats.power);
-    setStat('speed', tribe.stats.speed);
-    setStat('defense', tribe.stats.defense);
-    setStat('ruach', tribe.stats.ruach);
+    setStat('power', stats.power);
+    setStat('speed', stats.speed);
+    setStat('defense', stats.defense);
+    setStat('ruach', stats.ruach);
   }
 
   bindActionButtons() {
+    // 0. Toggle de Forma (Jovem vs Despertar da Bênção)
+    const btnYoung = document.getElementById('btn-form-young');
+    const btnAwakened = document.getElementById('btn-form-awakened');
+    if (btnYoung) btnYoung.addEventListener('click', () => this.selectForm('young'));
+    if (btnAwakened) btnAwakened.addEventListener('click', () => this.selectForm('awakened'));
+
     // 1. Botões de Animação
     const animBtns = document.querySelectorAll('.btn-anim');
     animBtns.forEach((btn) => {
