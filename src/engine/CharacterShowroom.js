@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DetailedHumanModel } from './DetailedHumanModel.js';
 
 export class CharacterShowroom {
@@ -27,7 +28,11 @@ export class CharacterShowroom {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
+    this.renderer.toneMappingExposure = 1.4;
+
+    // Environment map for photorealistic PBR studio reflections (prevents black metal)
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
     // 3. Studio Lighting & Pedestal Altar
     this.setupLighting();
@@ -100,11 +105,29 @@ export class CharacterShowroom {
 
     this.gltfModel = gltf.scene;
 
-    // Enable shadows and adjust materials
+    // Enable shadows and adjust materials for vibrant studio presentation
     this.gltfModel.traverse((node) => {
       if (node.isMesh) {
         node.castShadow = true;
         node.receiveShadow = true;
+        if (node.material) {
+          const mat = node.material;
+          mat.side = THREE.DoubleSide; // Render both sides of polygons
+
+          // AI models often set metalness to 1.0 which makes them look black if no intense reflection is available
+          if (mat.metalness > 0.4) {
+            mat.metalness = 0.15;
+          }
+          if (mat.roughness < 0.3) {
+            mat.roughness = 0.55;
+          }
+
+          // Ensure correct sRGB color encoding on texture maps
+          if (mat.map) {
+            mat.map.colorSpace = THREE.SRGBColorSpace;
+          }
+          mat.needsUpdate = true;
+        }
       }
     });
 
@@ -134,8 +157,13 @@ export class CharacterShowroom {
   }
 
   setupLighting() {
+    // Hemisphere Light for natural 360-degree ambient brightness
+    const hemiLight = new THREE.HemisphereLight(0xfff7ed, 0x334155, 1.8);
+    hemiLight.position.set(0, 15, 0);
+    this.scene.add(hemiLight);
+
     // Ambient Soft Fill
-    const ambientLight = new THREE.AmbientLight(0xfff7ed, 0.65);
+    const ambientLight = new THREE.AmbientLight(0xfff7ed, 0.85);
     this.scene.add(ambientLight);
 
     // Key Light (Main Gold Studio Light)
