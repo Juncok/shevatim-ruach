@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHEVATIM: RUACH - 3D Anime Arena Fighter das 12 Tribos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Montserrat:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="showroom-container">
+    <!-- 3D Canvas -->
+    <canvas id="showroom-canvas"></canvas>
+
+    <!-- Top Header Bar -->
+    <header class="showroom-header">
+      <div class="header-brand">
+        <span class="game-tag">ARENA FIGHTER 3D • 12 TRIBOS DE ISRAEL</span>
+        <h1 class="header-title">SHEVATIM: RUACH</h1>
+      </div>
+      <div class="header-status">
+        <span class="status-indicator">● PERSONAGEM 1/12 ATIVO</span>
+        <span id="current-tribe-tag" class="tribe-highlight-tag">🦁 TRIBO DE JUDÁ</span>
+      </div>
+    </header>
+
+    <!-- Left Panel: Ficha Técnica & Lore Bíblico do Guerreiro -->
+    <aside class="character-card-panel" id="char-info-panel">
+      <div class="panel-glass">
+        <!-- Hebrew Calligraphy Background -->
+        <div class="hebrew-watermark" id="char-hebrew">יְהוּדָה</div>
+
+        <!-- Identity Header -->
+        <div class="char-header-block">
+          <span class="char-symbol" id="char-symbol">🦁</span>
+          <div class="char-title-wrap">
+            <h2 class="char-name" id="char-name">JUDÁ</h2>
+            <h3 class="char-subtitle" id="char-title">O Leão Soberano</h3>
+          </div>
+        </div>
+
+        <div class="divider-gold"></div>
+
+        <!-- Biblical Lore & Prophecy -->
+        <div class="lore-section">
+          <h4 class="section-label">📜 BÊNÇÃO PROFÉTICA ANCESTRAL</h4>
+          <blockquote class="bible-quote" id="char-blessing">
+            "Judá é leãozinho; da presa subiste, filho meu. Encurva-se e deita-se como leão; o cetro não se arredará de Judá." (Gênesis 49:9-10)
+          </blockquote>
+        </div>
+
+        <!-- Combat Identity -->
+        <div class="combat-identity-grid">
+          <div class="identity-item">
+            <span class="id-label">ESTILO DE COMBATE</span>
+            <span class="id-val" id="char-role">Guerreiro Régio • Alto Impacto</span>
+          </div>
+          <div class="identity-item">
+            <span class="id-label">ARMA SAGRADA</span>
+            <span class="id-val" id="char-weapon">Cetro Real de Ouro & Lápis-Lazúli</span>
+          </div>
+          <div class="identity-item full-width">
+            <span class="id-label">TÉCNICA SECRETA (ULTIMATE)</span>
+            <span class="id-val highlight-gold" id="char-ultimate">Fúria do Leão Ancestral (Invocação de Avatar Espectral)</span>
+          </div>
+        </div>
+
+        <!-- Atributos de Combate (Stat Bars) -->
+        <div class="stats-section">
+          <h4 class="section-label">ATRIBUTOS DA TRIBO</h4>
+
+          <div class="stat-row">
+            <span class="stat-name">PODER</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="stat-power" style="width: 95%;"></div>
+            </div>
+            <span class="stat-num" id="stat-val-power">95</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-name">VELOCIDADE</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="stat-speed" style="width: 78%;"></div>
+            </div>
+            <span class="stat-num" id="stat-val-speed">78</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-name">DEFESA</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="stat-defense" style="width: 90%;"></div>
+            </div>
+            <span class="stat-num" id="stat-val-defense">90</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-name">RUACH (ESPÍRITO)</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="stat-ruach" style="width: 88%;"></div>
+            </div>
+            <span class="stat-num" id="stat-val-ruach">88</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Panel: Teste de Animações & Câmera Interativa -->
+    <aside class="controls-action-panel">
+      <!-- Animações do Personagem -->
+      <div class="action-card-glass">
+        <h3 class="action-card-title">🎬 TESTAR ANIMAÇÕES</h3>
+        <p class="action-card-subtitle">Veja o modelo se mover em tempo real:</p>
+
+        <div class="btn-anim-grid">
+          <button class="btn-anim active" data-anim="idle">
+            <span class="btn-icon">🛡️</span>
+            <span class="btn-text">Postura Normal (Idle)</span>
+          </button>
+          <button class="btn-anim" data-anim="combat">
+            <span class="btn-icon">⚔️</span>
+            <span class="btn-text">Posição de Combate</span>
+          </button>
+          <button class="btn-anim" data-anim="attack">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">Golpe do Cetro</span>
+          </button>
+          <button class="btn-anim" data-anim="victory">
+            <span class="btn-icon">🦁</span>
+            <span class="btn-text">Brado de Vitória</span>
+          </button>
+          <button class="btn-anim" data-anim="awakening">
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">Despertar Ancestral</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Presets de Câmera & Inspeção 3D -->
+      <div class="action-card-glass">
+        <h3 class="action-card-title">🔍 INSPEÇÃO 3D</h3>
+        <div class="btn-cam-grid">
+          <button class="btn-cam active" data-cam="full">👤 Corpo Inteiro</button>
+          <button class="btn-cam" data-cam="face">👑 Rosto & Coroa</button>
+          <button class="btn-cam" data-cam="weapon">⚔️ Cetro & Gemas</button>
+        </div>
+        <button id="btn-autorotate" class="btn-toggle-spin">
+          <span>🔄 GIRAR 360° AUTOMÁTICO: DESLIGADO</span>
+        </button>
+      </div>
+
+      <!-- Importar Modelo 3D (.GLB de IA / Mixamo) -->
+      <div class="action-card-glass">
+        <h3 class="action-card-title">🤖 MODELOS 3D DE IA</h3>
+        <p class="action-card-subtitle">Gere no Tripo3D / Meshy e teste aqui:</p>
+        <button id="btn-import-glb" class="btn-import-model">
+          <span>📁 CARREGAR ARQUIVO .GLB</span>
+        </button>
+        <input type="file" id="glb-file-input" accept=".glb,.gltf" style="display: none;">
+        <div class="drag-drop-note">Dica: Ou arraste o <strong>.glb</strong> direto na tela!</div>
+      </div>
+
+      <!-- Dica de Mouse -->
+      <div class="mouse-hint-box">
+        <span>🖱️ <strong>Mouse:</strong> Clique e arraste para girar 360° • Role para aproximar (zoom)</span>
+      </div>
+    </aside>
+
+    <!-- Bottom Carousel: As 12 Tribos de Israel -->
+    <nav class="tribes-roster-footer">
+      <div class="roster-header">
+        <span class="roster-title">ESCOLHA UMA TRIBO PARA VISUALIZAR:</span>
+        <span class="roster-counter">12 TRIBOS ANCESTRAIS</span>
+      </div>
+      <div class="roster-carousel" id="roster-carousel">
+        <!-- Inserido dinamicamente via JS com as 12 Tribos -->
+      </div>
+    </nav>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

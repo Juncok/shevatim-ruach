@@ -1,0 +1,609 @@
+/* ===================================================
+   TRIBOS: Batalha pelo Selo Sagrado
+   3D Character Showroom & 12 Tribes Selection Screen
+   =================================================== */
+
+:root {
+  --primary-gold: #f59e0b;
+  --bright-gold: #fbbf24;
+  --royal-blue: #1e3a8a;
+  --deep-blue: #0f172a;
+  --shadow-dark: #070b14;
+  --card-glass: rgba(15, 23, 42, 0.75);
+  --card-border: rgba(245, 158, 11, 0.35);
+  --font-title: 'Cinzel', serif;
+  --font-action: 'Teko', sans-serif;
+  --font-body: 'Montserrat', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--shadow-dark);
+  font-family: var(--font-body);
+  color: #fff;
+}
+
+#showroom-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#showroom-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+  cursor: grab;
+}
+
+#showroom-canvas:active {
+  cursor: grabbing;
+}
+
+/* ===================================================
+   TOPO: HEADER
+   =================================================== */
+.showroom-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(7, 11, 20, 0.9) 0%, rgba(7, 11, 20, 0.4) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.header-brand {
+  pointer-events: auto;
+}
+
+.game-tag {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  color: var(--bright-gold);
+  text-transform: uppercase;
+}
+
+.header-title {
+  font-family: var(--font-action);
+  font-size: 2.8rem;
+  letter-spacing: 4px;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  pointer-events: auto;
+}
+
+.status-indicator {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #94a3b8;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tribe-highlight-tag {
+  font-family: var(--font-action);
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  color: var(--bright-gold);
+  background: rgba(245, 158, 11, 0.15);
+  padding: 4px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--primary-gold);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+/* ===================================================
+   PAINEL ESQUERDO: FICHA TÉCNICA DO GUERREIRO
+   =================================================== */
+.character-card-panel {
+  position: absolute;
+  top: 100px;
+  left: 40px;
+  width: 380px;
+  z-index: 10;
+  pointer-events: auto;
+  animation: slide-in-left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.panel-glass {
+  position: relative;
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+  overflow: hidden;
+}
+
+.hebrew-watermark {
+  position: absolute;
+  right: -10px;
+  top: 10px;
+  font-size: 6.5rem;
+  font-family: serif;
+  font-weight: bold;
+  color: rgba(245, 158, 11, 0.08);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.char-header-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.char-symbol {
+  font-size: 3.2rem;
+  filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.5));
+}
+
+.char-name {
+  font-family: var(--font-action);
+  font-size: 3rem;
+  letter-spacing: 3px;
+  line-height: 0.9;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+
+.char-subtitle {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--bright-gold);
+  text-transform: uppercase;
+}
+
+.divider-gold {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--primary-gold), transparent);
+  margin-bottom: 16px;
+}
+
+.section-label {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.lore-section {
+  margin-bottom: 16px;
+}
+
+.bible-quote {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+  font-style: italic;
+  border-left: 3px solid var(--primary-gold);
+  padding-left: 12px;
+  background: rgba(245, 158, 11, 0.05);
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-radius: 0 6px 6px 0;
+}
+
+.combat-identity-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.identity-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.id-label {
+  font-size: 0.68rem;
+  font-family: var(--font-title);
+  letter-spacing: 1.5px;
+  color: #94a3b8;
+}
+
+.id-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.id-val.highlight-gold {
+  color: var(--bright-gold);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+/* ===================================================
+   BARRAS DE ATRIBUTOS
+   =================================================== */
+.stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-name {
+  font-family: var(--font-action);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  width: 90px;
+  color: #cbd5e1;
+}
+
+.stat-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d97706, #f59e0b, #fde047);
+  box-shadow: 0 0 8px #f59e0b;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-num {
+  font-family: var(--font-action);
+  font-size: 1.1rem;
+  width: 25px;
+  text-align: right;
+  color: var(--bright-gold);
+}
+
+/* ===================================================
+   PAINEL DIREITO: TESTAR ANIMAÇÕES E CÂMERA
+   =================================================== */
+.controls-action-panel {
+  position: absolute;
+  top: 100px;
+  right: 40px;
+  width: 320px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: auto;
+  animation: slide-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.action-card-glass {
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.action-card-title {
+  font-family: var(--font-action);
+  font-size: 1.3rem;
+  letter-spacing: 1.5px;
+  color: var(--bright-gold);
+  margin-bottom: 2px;
+}
+
+.action-card-subtitle {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.btn-anim-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.btn-anim {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn-anim:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--primary-gold);
+  transform: translateX(-4px);
+}
+
+.btn-anim.active {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.15));
+  border-color: var(--primary-gold);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.btn-cam-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.btn-cam {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 7px 4px;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cam:hover, .btn-cam.active {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: var(--primary-gold);
+  color: #fff;
+}
+
+.btn-toggle-spin {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 8px;
+  padding: 8px;
+  font-family: var(--font-action);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--bright-gold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-toggle-spin:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: var(--bright-gold);
+}
+
+.btn-import-model {
+  width: 100%;
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: var(--font-action);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.btn-import-model:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+}
+
+.drag-drop-note {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.mouse-hint-box {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* ===================================================
+   RODAPÉ: CARROSSEL DAS 12 TRIBOS DE ISRAEL
+   =================================================== */
+.tribes-roster-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 40px 24px;
+  background: linear-gradient(0deg, rgba(7, 11, 20, 0.98) 0%, rgba(7, 11, 20, 0.8) 70%, transparent 100%);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.roster-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.roster-title {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #94a3b8;
+}
+
+.roster-counter {
+  font-family: var(--font-action);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--bright-gold);
+}
+
+.roster-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-behavior: smooth;
+}
+
+.roster-carousel::-webkit-scrollbar {
+  height: 4px;
+}
+
+.roster-carousel::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.4);
+  border-radius: 2px;
+}
+
+.roster-card {
+  flex: 0 0 135px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.roster-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.roster-card.active {
+  border-color: var(--bright-gold);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+  transform: translateY(-6px) scale(1.04);
+}
+
+.card-icon {
+  font-size: 2rem;
+}
+
+.card-name {
+  font-family: var(--font-action);
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  color: #fff;
+  line-height: 1;
+}
+
+.card-hebrew {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-family: serif;
+}
+
+.card-status {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+.status-completo {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.status-em-desenvolvimento {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid #f59e0b;
+}
+
+.status-planejado {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid #475569;
+}
