@@ -1,5 +1,6 @@
 import { TRIBES } from './tribesData.js';
 import { CharacterShowroom } from './engine/CharacterShowroom.js';
+import { getTribeIcon } from './icons.js';
 
 class App {
   constructor() {
@@ -15,7 +16,7 @@ class App {
     // Constrói o Carrossel das 12 Tribos no rodapé
     this.initRosterCarousel();
 
-    // Conecta os botões de Animação e Câmera
+    // Conecta os botões de Animação, Câmera e Ocultação de Interface
     this.bindActionButtons();
 
     // Carrega o primeiro guerreiro (Judá)
@@ -35,16 +36,10 @@ class App {
       card.className = `roster-card ${tribe.id === this.currentTribe.id ? 'active' : ''}`;
       card.dataset.tribeId = tribe.id;
 
-      // Status badge class
-      let statusClass = 'status-planejado';
-      if (tribe.status === 'COMPLETO') statusClass = 'status-completo';
-      else if (tribe.status === 'EM DESENVOLVIMENTO') statusClass = 'status-em-desenvolvimento';
-
       card.innerHTML = `
-        <span class="card-icon">${tribe.symbol}</span>
+        <div class="card-icon-wrap">${getTribeIcon(tribe.id)}</div>
         <span class="card-name">${tribe.name}</span>
         <span class="card-hebrew">${tribe.hebrew}</span>
-        <span class="card-status ${statusClass}">${tribe.status}</span>
       `;
 
       card.addEventListener('click', () => {
@@ -63,10 +58,10 @@ class App {
       card.classList.toggle('active', card.dataset.tribeId === tribe.id);
     });
 
-    // Atualiza header
+    // Atualiza header com ícone vetorial branco
     const tag = document.getElementById('current-tribe-tag');
     if (tag) {
-      tag.innerText = `${tribe.symbol} TRIBO DE ${tribe.name}`;
+      tag.innerHTML = `<span class="tag-icon-wrap">${getTribeIcon(tribe.id)}</span> <span>TRIBO DE ${tribe.name}</span>`;
       tag.style.borderColor = tribe.colors.primary;
       tag.style.color = tribe.colors.accent;
     }
@@ -103,7 +98,7 @@ class App {
     const formData = (tribe.forms && tribe.forms[this.currentForm]) ? tribe.forms[this.currentForm] : tribe;
 
     if (elHebrew) elHebrew.innerText = tribe.hebrew;
-    if (elSymbol) elSymbol.innerText = tribe.symbol;
+    if (elSymbol) elSymbol.innerHTML = getTribeIcon(tribe.id);
     if (elName) elName.innerText = tribe.name;
     if (elTitle) elTitle.innerText = formData.title || tribe.title;
     if (elBlessing) elBlessing.innerText = tribe.blessing;
@@ -161,8 +156,8 @@ class App {
       btnRotate.addEventListener('click', () => {
         const isSpinning = this.showroom.toggleAutoRotate();
         btnRotate.innerText = isSpinning
-          ? '🔄 GIRAR 360° AUTOMÁTICO: ATIVO'
-          : '🔄 GIRAR 360° AUTOMÁTICO: DESLIGADO';
+          ? 'GIRAR 360° AUTOMÁTICO: ATIVO'
+          : 'GIRAR 360° AUTOMÁTICO: DESLIGADO';
         btnRotate.style.background = isSpinning ? 'rgba(245, 158, 11, 0.3)' : '';
       });
     }
@@ -178,6 +173,19 @@ class App {
         }
       });
     }
+
+    // 5. Botão de Ocultar / Exibir Interface Completa (Modo Livre)
+    const btnToggleHud = document.getElementById('btn-toggle-hud');
+    if (btnToggleHud) {
+      btnToggleHud.addEventListener('click', () => {
+        const isHidden = document.body.classList.toggle('hud-hidden');
+        const textSpan = btnToggleHud.querySelector('.hud-btn-text');
+        if (textSpan) textSpan.innerText = isHidden ? 'EXIBIR INTERFACE' : 'OCULTAR INTERFACE';
+        btnToggleHud.classList.toggle('active', isHidden);
+      });
+    }
+
+
   }
 }
 

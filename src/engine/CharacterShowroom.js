@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DetailedHumanModel } from './DetailedHumanModel.js';
 
@@ -27,12 +28,13 @@ export class CharacterShowroom {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.4;
+    this.renderer.toneMapping = THREE.NeutralToneMapping;
+    this.renderer.toneMappingExposure = 1.0;
 
     // Environment map for photorealistic PBR studio reflections (prevents black metal)
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.scene.environmentIntensity = 0.5;
 
     // 3. Studio Lighting & Pedestal Altar
     this.setupLighting();
@@ -49,9 +51,12 @@ export class CharacterShowroom {
     this.humanModel = null;
     this.gltfModel = null;
     this.mixer = null;
+    this.animationActions = {};
+    this.currentAction = null;
     this.gltfLoader = new GLTFLoader();
+    this.fbxLoader = new FBXLoader();
 
-    // 6. Setup Drag & Drop .GLB File Import
+    // 6. Setup Drag & Drop .GLB and .FBX File Import
     this.setupDragAndDrop();
 
     this.animate = this.animate.bind(this);
@@ -69,27 +74,105 @@ export class CharacterShowroom {
       e.stopPropagation();
       const files = e.dataTransfer.files;
       if (files.length > 0) {
-        this.loadGLBFromFile(files[0]);
+        this.loadModelFromFile(files[0]);
       }
     });
   }
 
-  loadGLBFromFile(file) {
-    if (!file.name.toLowerCase().endsWith('.glb') && !file.name.toLowerCase().endsWith('.gltf')) {
-      alert('Por favor, envie um arquivo .glb ou .gltf!');
+  loadModelFromFile(file) {
+    const ext = file.name.toLowerCase().split('.').pop();
+    if (!['glb', 'gltf', 'fbx'].includes(ext)) {
+      alert('Por favor, envie um arquivo .glb, .gltf ou .fbx!');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
       const contents = e.target.result;
-      this.gltfLoader.parse(contents, '', (gltf) => {
-        this.displayGLTF(gltf);
-      }, (err) => {
-        console.error('Erro ao processar GLB:', err);
-      });
+      if (ext === 'fbx') {
+        try {
+          const fbxObj = this.fbxLoader.parse(contents, '');
+          this.displayGLTF({ scene: fbxObj, animations: fbxObj.animations });
+        } catch (err) {
+          console.error('Erro ao processar FBX:', err);
+        }
+      } else {
+        this.gltfLoader.parse(contents, '', (gltf) => {
+          this.displayGLTF(gltf);
+        }, (err) => {
+          console.error('Erro ao processar GLB:', err);
+        });
+      }
     };
     reader.readAsArrayBuffer(file);
+  }
+
+  loadGLBFromFile(file) {
+    this.loadModelFromFile(file);
+  }
+
+  attachStaff(model) {
+    let rightHand = null;
+    model.traverse((node) => {
+      if (node.isBone && node.name.toLowerCase().includes('righthand') && !node.name.toLowerCase().includes('thumb') && !node.name.toLowerCase().includes('index')) {
+        rightHand = node;
+      }
+    });
+
+    if (rightHand) {
+      // Remove any previously attached staff
+      const existingStaff = rightHand.getObjectByName('StaffOfJudah');
+      if (existingStaff) rightHand.remove(existingStaff);
+
+      const staffGroup = new THREE.Group();
+      staffGroup.name = 'StaffOfJudah';
+
+      // Staff Shaft (Gold and carved wood)
+      const shaftGeo = new THREE.CylinderGeometry(0.015, 0.02, 1.8, 16);
+      const shaftMat = new THREE.MeshStandardMaterial({
+        color: 0xd4af37, // Rich Royal Gold
+        metalness: 0.85,
+        roughness: 0.25
+      });
+      const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+      shaft.castShadow = true;
+      staffGroup.add(shaft);
+
+      // Staff Headpiece (Lion crest / Sceptre Crown)
+      const crownGeo = new THREE.CylinderGeometry(0.05, 0.025, 0.16, 8);
+      const crownMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.9,
+        roughness: 0.2
+      });
+      const crown = new THREE.Mesh(crownGeo, crownMat);
+      crown.position.y = 0.9;
+      staffGroup.add(crown);
+
+      // Sacred Gemstone (Glowing Sapphire/Lapis-Lazúli)
+      const gemGeo = new THREE.OctahedronGeometry(0.055, 1);
+      const gemMat = new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        emissive: 0x0284c7,
+        emissiveIntensity: 0.8,
+        roughness: 0.1,
+        metalness: 0.2
+      });
+      const gem = new THREE.Mesh(gemGeo, gemMat);
+      gem.position.y = 1.02;
+      staffGroup.add(gem);
+
+      // Gem subtle point light
+      const gemLight = new THREE.PointLight(0x38bdf8, 1.0, 1.8);
+      gemLight.position.y = 1.02;
+      staffGroup.add(gemLight);
+
+      // Orientation relative to palm
+      staffGroup.rotation.x = Math.PI / 2;
+      staffGroup.position.set(0, 0, 0);
+
+      rightHand.add(staffGroup);
+    }
   }
 
   displayGLTF(gltf) {
@@ -107,19 +190,22 @@ export class CharacterShowroom {
 
     // Enable shadows and adjust materials for vibrant studio presentation
     this.gltfModel.traverse((node) => {
-      if (node.isMesh) {
+      if (node.isMesh && node.material) {
         node.castShadow = true;
         node.receiveShadow = true;
-        if (node.material) {
-          const mat = node.material;
+
+        const materials = Array.isArray(node.material) ? node.material : [node.material];
+        materials.forEach((mat) => {
           mat.side = THREE.DoubleSide; // Render both sides of polygons
 
-          // AI models often set metalness to 1.0 which makes them look black if no intense reflection is available
-          if (mat.metalness > 0.4) {
-            mat.metalness = 0.15;
+          // Neutralize unintended blinding emissive colors often exported by Mixamo / AI tools
+          if (mat.emissive) {
+            mat.emissive.set(0x000000);
           }
-          if (mat.roughness < 0.3) {
-            mat.roughness = 0.55;
+
+          // Balance HDR environment reflection intensity so cloth & skin stay matte and rich
+          if (mat.envMapIntensity !== undefined) {
+            mat.envMapIntensity = 0.4;
           }
 
           // Ensure correct sRGB color encoding on texture maps
@@ -127,7 +213,7 @@ export class CharacterShowroom {
             mat.map.colorSpace = THREE.SRGBColorSpace;
           }
           mat.needsUpdate = true;
-        }
+        });
       }
     });
 
@@ -148,45 +234,77 @@ export class CharacterShowroom {
 
     this.scene.add(this.gltfModel);
 
-    // Setup Animations if available
+    // Attach rigid weapon/staff prop to right hand
+    this.attachStaff(this.gltfModel);
+
+    // Setup Animations
+    this.animationActions = {};
+    this.currentAction = null;
+
     if (gltf.animations && gltf.animations.length > 0) {
       this.mixer = new THREE.AnimationMixer(this.gltfModel);
-      const action = this.mixer.clipAction(gltf.animations[0]);
-      action.play();
+
+      gltf.animations.forEach((clip) => {
+        const action = this.mixer.clipAction(clip);
+        const nameLower = clip.name.toLowerCase();
+        this.animationActions[nameLower] = action;
+        this.animationActions[clip.name] = action;
+      });
+
+      // Map canonical actions
+      const findAction = (...keys) => {
+        for (const k of keys) {
+          const match = Object.keys(this.animationActions).find(name => name.toLowerCase().includes(k.toLowerCase()));
+          if (match) return this.animationActions[match];
+        }
+        return null;
+      };
+
+      const idleAction = findAction('idle') || this.mixer.clipAction(gltf.animations[0]);
+      const walkAction = findAction('walk', 'run', 'great sword walk') || idleAction;
+      const attackAction = findAction('cast', 'attack', 'sword', 'ground') || idleAction;
+      const roarAction = findAction('roar', 'taunt', 'victory') || attackAction;
+
+      this.animationActions['idle'] = idleAction;
+      this.animationActions['combat'] = walkAction;
+      this.animationActions['walk'] = walkAction;
+      this.animationActions['attack'] = attackAction;
+      this.animationActions['cast'] = attackAction;
+      this.animationActions['victory'] = roarAction;
+      this.animationActions['awakening'] = roarAction;
+
+      // Start playing idle animation
+      this.currentAction = idleAction;
+      this.currentAction.play();
     }
   }
 
   setupLighting() {
-    // Hemisphere Light for natural 360-degree ambient brightness
-    const hemiLight = new THREE.HemisphereLight(0xfff7ed, 0x334155, 1.8);
+    // Ambient Soft Fill (Kept low to let ambient occlusion and natural shadows emerge)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    this.scene.add(ambientLight);
+
+    // Hemisphere Light for natural sky/ground bounce without blowing out highlights
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x1e293b, 0.35);
     hemiLight.position.set(0, 15, 0);
     this.scene.add(hemiLight);
 
-    // Ambient Soft Fill
-    const ambientLight = new THREE.AmbientLight(0xfff7ed, 0.85);
-    this.scene.add(ambientLight);
-
-    // Key Light (Main Gold Studio Light)
-    this.keyLight = new THREE.DirectionalLight(0xffedd5, 1.8);
-    this.keyLight.position.set(3.5, 5.5, 4.0);
+    // Key Light (Clean neutral studio light providing clear directional contrast and depth)
+    this.keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.keyLight.position.set(2.5, 4.5, 3.5);
     this.keyLight.castShadow = true;
     this.keyLight.shadow.mapSize.width = 2048;
     this.keyLight.shadow.mapSize.height = 2048;
     this.keyLight.shadow.bias = -0.0003;
     this.scene.add(this.keyLight);
 
-    // Rim Light (Crucial for anime/warrior silhouette definition)
-    this.rimLight = new THREE.DirectionalLight(0x60a5fa, 1.2);
-    this.rimLight.position.set(-3.5, 3.5, -4.0);
+    // Rim Light (Subtle edge separation from background)
+    this.rimLight = new THREE.DirectionalLight(0x93c5fd, 0.35);
+    this.rimLight.position.set(-3.0, 3.0, -3.5);
     this.scene.add(this.rimLight);
 
-    // Front Warm Fill Light
-    const fillLight = new THREE.DirectionalLight(0xfef08a, 0.6);
-    fillLight.position.set(0, 1.5, 4.5);
-    this.scene.add(fillLight);
-
-    // Upward Pedestal Spot (Underglow)
-    this.pedestalLight = new THREE.PointLight(0xf59e0b, 2.5, 7);
+    // Upward Pedestal Spot (Gentle floor underglow)
+    this.pedestalLight = new THREE.PointLight(0xf59e0b, 0.4, 3);
     this.pedestalLight.position.set(0, 0.4, 0);
     this.scene.add(this.pedestalLight);
   }
@@ -357,16 +475,6 @@ export class CharacterShowroom {
   loadTribe(tribeData) {
     this.currentTribe = tribeData;
 
-    // Remove previous model
-    if (this.humanModel) {
-      this.scene.remove(this.humanModel.group);
-    }
-
-    // Build Detailed Human Model
-    this.humanModel = new DetailedHumanModel(tribeData);
-    this.humanModel.group.position.set(0, 0.25, 0);
-    this.scene.add(this.humanModel.group);
-
     // Adjust light colors to match tribe theme
     if (this.pedestalLight) {
       this.pedestalLight.color.set(tribeData.colors.primary);
@@ -375,11 +483,59 @@ export class CharacterShowroom {
     if (this.onCharacterLoaded) {
       this.onCharacterLoaded(tribeData);
     }
+
+    // If Judá, load our newly unified .glb with all 4 animations & textures
+    if (tribeData.id === 'judah') {
+      this.gltfLoader.load('/judah.glb', (gltf) => {
+        this.displayGLTF(gltf);
+      }, undefined, (err) => {
+        console.warn('Fallback to procedural model:', err);
+        this.loadProceduralModel(tribeData);
+      });
+    } else {
+      this.loadProceduralModel(tribeData);
+    }
+  }
+
+  loadProceduralModel(tribeData) {
+    // Remove previous models
+    if (this.humanModel) {
+      this.scene.remove(this.humanModel.group);
+      this.humanModel = null;
+    }
+    if (this.gltfModel) {
+      this.scene.remove(this.gltfModel);
+      this.gltfModel = null;
+    }
+
+    // Build Detailed Human Model
+    this.humanModel = new DetailedHumanModel(tribeData);
+    this.humanModel.group.position.set(0, 0.25, 0);
+    this.scene.add(this.humanModel.group);
   }
 
   setAnimation(animName) {
     if (this.humanModel) {
       this.humanModel.setAnimation(animName);
+    }
+
+    if (this.mixer && this.animationActions) {
+      const animKey = animName.toLowerCase();
+      let target = this.animationActions[animKey];
+      if (!target) {
+        if (animKey === 'combat') target = this.animationActions['walk'] || this.animationActions['idle'];
+        else if (animKey === 'attack') target = this.animationActions['cast'] || this.animationActions['attack'];
+        else if (animKey === 'victory' || animKey === 'awakening') target = this.animationActions['roar'] || this.animationActions['victory'];
+        else target = this.animationActions['idle'];
+      }
+
+      if (target && this.currentAction !== target) {
+        if (this.currentAction) {
+          this.currentAction.fadeOut(0.35);
+        }
+        target.reset().fadeIn(0.35).play();
+        this.currentAction = target;
+      }
     }
   }
 

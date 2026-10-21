@@ -1,7 +1,7 @@
 {
   "name": "shevatim-ruach",
   "version": "1.0.0",
-  "description": "SHEVATIM: RUACH - 3D Anime Arena Fighter featuring the 12 Tribes of Israel",
+  "description": "SHEVATIM: RUACH - As 12 Tribos de Israel",
   "main": "index.js",
   "type": "module",
   "scripts": {

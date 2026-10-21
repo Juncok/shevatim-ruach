@@ -1,5 +1,5 @@
 # 🦁 SHEVATIM: RUACH (שְׁבָטִים: רוּחַ)
-### *3D Anime Arena Fighter — As 12 Tribos de Israel*
+### *As 12 Tribos de Israel*
 
 ![Three.js](https://img.shields.io/badge/Three.js-r186-black?style=for-the-badge&logo=three.js)
 ![WebGL](https://img.shields.io/badge/WebGL-2.0-red?style=for-the-badge)
@@ -9,18 +9,18 @@
 > **"Shevatim"** (שְׁבָטִים) = *As Tribos*  
 > **"Ruach"** (רוּחַ) = *O Espírito / O Fôlego Sagrado de Poder*
 
-**SHEVATIM: RUACH** é o primeiro jogo de luta 3D de arena (estilo *Naruto Shippuden: Ultimate Ninja Storm*, *Dragon Ball Sparking! ZERO* e *Tekken*) inspirado na rica mitologia e profecias bíblicas das **12 Tribos de Israel** (Gênesis 49 e Deuteronômio 33).
+**SHEVATIM: RUACH** é o primeiro jogo 3D (estilo *Naruto Shippuden: Ultimate Ninja Storm*, *Dragon Ball Sparking! ZERO* e *Tekken*) inspirado na rica mitologia e profecias bíblicas das **12 Tribos de Israel** (Gênesis 49 e Deuteronômio 33).
 
 Cada guerreiro personifica a identidade, o animal sagrado, a arma e os atributos proféticos de sua respectiva tribo.
 
 ---
 
 ## 🏛️ O Showroom 3D de Personagens
-O projeto conta com um **Visualizador & Showroom 3D** onde os guerreiros podem ser inspecionados em tempo real:
+O projeto conta com um **Visualizador e Showroom 3D** onde os guerreiros podem ser inspecionados em tempo real:
 * 🔍 **Inspeção 360°:** Rotação e zoom livre da câmera com iluminação de estúdio (Key, Fill, Rim Light);
 * 🎬 **Testador de Animações:** Postura normal (Idle), combate, golpes cortantes com armas, brado de vitória e despertar de aura;
-* 📜 **Ficha Técnica & Lore:** Nome em hebraico, bênção bíblica profética, estilo de combate e gráficos de atributos;
-* 🤖 **Importador de Modelos 3D (.GLB):** Suporte nativo para carregar modelos de IA (Tripo3D, Meshy) ou Mixamo com *Drag & Drop* direto no navegador!
+* 📜 **Ficha Técnica e Lore:** Nome em hebraico, bênção bíblica profética, estilo de combate e gráficos de atributos;
+* 🤖 **Importador de Modelos 3D (.GLB):** Suporte nativo para carregar modelos de IA (Tripo3D, Meshy) ou Mixamo com *Drag e Drop* direto no navegador!
 
 ---
 
@@ -28,25 +28,25 @@ O projeto conta com um **Visualizador & Showroom 3D** onde os guerreiros podem s
 
 | Tribo | Totem / Símbolo | Estilo de Combate | Arma Sagrada |
 | :--- | :--- | :--- | :--- |
-| **Judá** | 🦁 Leão de Ouro | Guerreiro Régio • Golpes de Alto Impacto | Cetro Real de Ouro & Lápis-Lazúli |
+| **Judá** | 🦁 Leão de Ouro | Guerreiro Régio • Golpes de Alto Impacto | Cetro Real de Ouro e Lápis-Lazúli |
 | **Benjamim** | 🐺 Lobo Voraz | Assassino Ágil • Combos Rápidos e Furtividade | Adagas Duplas de Obsidiana e Damasco |
-| **Dan** | 🐍 Víbora da Vereda | Tático Furtivo • Esquivas e Dano Contínuo | Chicote Segmentado de Lâminas & Foice |
+| **Dan** | 🐍 Víbora da Vereda | Tático Furtivo • Esquivas e Dano Contínuo | Chicote Segmentado de Lâminas e Foice |
 | **Levi** | 🔥 Chamas do Santuário | Sacerdote • Magias de Luz Celestial e Fogo | Cajado com Efod das 12 Pedras Preciosas |
 | **Naftali** | 🦌 Cerva Solta | Acrobático Aéreo • Velocidade Extrema | Lança Leve com Penas Douradas |
-| **Zebulom** | 🌊 Senhor dos Mares | Combatente Marítimo • Controle de Campo | Tridente dos Abismos & Correntes de Âncora |
-| **Issacar** | ⭐ Titã Inabalável | Super Tanker • Hiper-Armadura e Golpes Telúricos | Escudo Maciço de Basalto & Mangual |
-| **Gade** | ⚔️ Vanguarda de Choque | Contra-Ataque • Posturas Militares | Lança de Choque & Escudo Balístico |
+| **Zebulom** | 🌊 Senhor dos Mares | Combatente Marítimo • Controle de Campo | Tridente dos Abismos e Correntes de Âncora |
+| **Issacar** | ⭐ Titã Inabalável | Super Tanker • Hiper-Armadura e Golpes Telúricos | Escudo Maciço de Basalto e Mangual |
+| **Gade** | ⚔️ Vanguarda de Choque | Contra-Ataque • Posturas Militares | Lança de Choque e Escudo Balístico |
 | **Aser** | 🫒 Andarilho de Bronze | Chutes Sísmicos • Calçado de Ferro e Bronze | Botas e Greaves Forjados de Metal |
 | **Rúben** | 💧 Torrente Impetuosa | Pressão Contínua • Espadachim Voraz | Montante Ondulado (Espada Flamejante) |
 | **Simeão** | 🗡️ Lâmina Escarlate | Berserker Implacável • Mais dano com vida baixa | Kopis Gêmeos (Lâminas Curvas) |
-| **José** | 🏹 Búfalo Selvagem | Atirador de Precisão Celestial • Longo Alcance | Arco Composto Sagrado & Flechas de Luz |
+| **José** | 🏹 Búfalo Selvagem | Atirador de Precisão Celestial • Longo Alcance | Arco Composto Sagrado e Flechas de Luz |
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 * **Engine:** [Three.js](https://threejs.org/) (WebGL 2.0 com sombras em tempo real, iluminação ACESFilmic e Shaders PBR)
 * **Build Tool:** [Vite](https://vitejs.dev/)
-* **Animações & Rigging:** Suporte a `.GLB` / `.GLTF` via `GLTFLoader` e `AnimationMixer`
+* **Animações e Rigging:** Suporte a `.GLB` / `.GLTF` via `GLTFLoader` e `AnimationMixer`
 * **Estilização:** CSS3 puro com Glassmorphism, Google Fonts (*Cinzel*, *Teko*, *Montserrat*)
 * **Áudio:** Web Audio API (Síntese procedural para impactos e efeitos sonoros sem arquivos pesados)
 
